@@ -7,9 +7,15 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.airbnb.lottie.L;
 import com.squareup.picasso.Picasso;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 public class ArticleAdapter extends RecyclerView.Adapter<CustomViewHolder> {
     private Context context;
@@ -32,6 +38,25 @@ public class ArticleAdapter extends RecyclerView.Adapter<CustomViewHolder> {
     public void onBindViewHolder(@NonNull CustomViewHolder holder, int position) {
         holder.text_title.setText(articles.get(position).getTitle());
         holder.text_source.setText(articles.get(position).getSource().getName());
+
+        String dateFromJSON = articles.get(position).getPublishedAt();
+        Locale locale = new Locale("ro","RO");
+        String [] items = dateFromJSON.split("[T,Z]");
+        String date = items[0];
+        String hour = items[1];
+
+        String dateString = date;
+        SimpleDateFormat inputFormat = new SimpleDateFormat("yyyy-MM-dd");
+        Date dateInput = null;
+        try {
+            dateInput = inputFormat.parse(dateString);
+            SimpleDateFormat outputFormat = new SimpleDateFormat("dd-MM-yyyy");
+            String formattedDate = outputFormat.format(dateInput);
+
+            holder.text_time.setText(formattedDate+" "+hour);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
 
         if (articles.get(position).getUrlToImage() != null) {
             Picasso.get().load(articles.get(position).getUrlToImage()).into(holder.img_headline);

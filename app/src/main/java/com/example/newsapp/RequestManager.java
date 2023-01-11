@@ -15,6 +15,7 @@ import retrofit2.http.Query;
 
 public class RequestManager {
     private Context context;
+
     Retrofit retrofit = new Retrofit.Builder()
             .baseUrl("https://newsapi.org/v2/")
             .addConverterFactory(GsonConverterFactory.create())
@@ -27,6 +28,7 @@ public class RequestManager {
     private static final String TAG = "RequestManager";
 
     public void getArticle(OnFetchDataListener listener, String category, String query) {
+
         CallNewsApi callNewsApi = retrofit.create(CallNewsApi.class);
         Call<NewsApiResponse> call = callNewsApi.callHeadlines(
                 "ro",
@@ -41,10 +43,7 @@ public class RequestManager {
                 public void onResponse(Call<NewsApiResponse> call, Response<NewsApiResponse> response) {
                     Log.i(TAG, "onResponse: "+response.body().getArticles().toString());
                     if (!response.isSuccessful()) {
-
-                        Snackbar.make(null, "Code: " + response.code(), Snackbar.LENGTH_INDEFINITE)
-                                .setAction("Dismiss", v -> {
-                                });
+                        Log.i(TAG, "onResponse: error");
                         return;
                     }
 
@@ -62,7 +61,7 @@ public class RequestManager {
     }
 
     public interface CallNewsApi {
-        @GET("top-headlines")
+        @GET("top-headlines") // ruta pe care se apeleaza api-ul
         Call<NewsApiResponse> callHeadlines(
                 @Query("country") String country,
                 @Query("category") String category,
